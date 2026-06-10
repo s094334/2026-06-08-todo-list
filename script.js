@@ -1,8 +1,4 @@
-let data = [
-    {
-        'content': '寫作業',
-    }
-];
+let data = [];
 
 // 渲染畫面
 function renderData() {
@@ -25,7 +21,7 @@ function renderData() {
     todoItems.innerHTML = str;
 }
 
-// 新增筆記
+// 新增 todo
 const addBtn = document.querySelector(".addBtn");
 const todoText = document.querySelector(".txt");
 
@@ -35,8 +31,11 @@ addBtn.addEventListener("click", function(e) {
         alert("不能輸入空白值");
         return
     }
-    let todoData = {};
-    todoData.content = todoText.value;
+    let todoData = {
+        id: Date.now(), 
+        content: todoText.value,
+        completed: false
+    };
     data.push(todoData);
     renderData()
 })
