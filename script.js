@@ -1,10 +1,12 @@
 let data = [];
+let currentTab = 'all';
 const todoItems = document.querySelector(".todoList_item");
 
 // 渲染畫面
-function renderData() {
+function renderData(currentTab) {
+    const filterData = filterTab(currentTab);
     let str = '';
-    data.forEach(function(item) {
+    filterData.forEach(function(item) {
         str += `
         <li data-id="${item.id}">
             <label class="todoList_label">
@@ -37,7 +39,7 @@ addBtn.addEventListener("click", function(e) {
         completed: false
     };
     data.push(todoData);
-    renderData()
+    renderData(currentTab)
 })
 
 // 更新 todo 狀態
@@ -48,3 +50,32 @@ todoItems.addEventListener("click", function(e) {
     const findTodo = data.find(item => item.id === todoId);
     findTodo.completed = e.target.checked;
 })
+
+// 顯示全部、待完成還是已完成
+const todoListTab = document.querySelector('.todoList_tab');
+
+todoListTab.addEventListener("click", function(e) {
+    e.preventDefault();
+
+    const allTabs = todoListTab.querySelectorAll('a');
+    allTabs.forEach(function(tab) {
+        tab.classList.remove("active");
+    })
+
+    const tab = e.target.closest('a');
+    tab.classList.add("active");
+
+    const filter = tab.dataset.tab;
+    currentTab = filter;
+    renderData(currentTab)
+})
+
+// 篩選不同的 todo
+function filterTab(filter) {
+    if (filter === 'pending') {
+        return data.filter(item => item.completed === false)
+    } else if (filter === 'completed') {
+        return data.filter(item => item.completed === true)
+    }
+    return data
+}
