@@ -21,6 +21,7 @@ function renderData(currentTab) {
     })
 
     todoItems.innerHTML = str;
+    completedCount(data);
 }
 
 // 新增 todo
@@ -39,7 +40,7 @@ addBtn.addEventListener("click", function(e) {
         completed: false
     };
     data.push(todoData);
-    renderData(currentTab)
+    renderData(currentTab);
 })
 
 // 更新 todo 狀態
@@ -49,6 +50,8 @@ todoItems.addEventListener("click", function(e) {
 
     const findTodo = data.find(item => item.id === todoId);
     findTodo.completed = e.target.checked;
+
+    completedCount(data);
 })
 
 // 顯示全部、待完成還是已完成
@@ -78,4 +81,11 @@ function filterTab(filter) {
         return data.filter(item => item.completed === true)
     }
     return data
+}
+
+// 計算已完成的項目
+function completedCount(data) {
+    const completedCount = data.filter(item => item.completed).length;
+    const el = document.querySelector(".todoList_statistics p");
+    el.textContent = `${completedCount} 個已完成項目`;
 }
