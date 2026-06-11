@@ -89,3 +89,17 @@ function completedCount(data) {
     const el = document.querySelector(".todoList_statistics p");
     el.textContent = `${completedCount} 個已完成項目`;
 }
+
+// 刪除 todo
+todoItems.addEventListener("click", function(e) {
+    if (!e.target.closest('a')) return;
+    e.preventDefault();
+
+    const list = e.target.closest('li');
+    const todoId = Number(list.dataset.id);
+    
+    const index = data.findIndex(item => item.id === todoId);
+    data.splice(index, 1);
+    
+    renderData(currentTab);
+})
