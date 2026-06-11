@@ -30,7 +30,7 @@ const todoText = document.querySelector(".txt");
 
 addBtn.addEventListener("click", function(e) {
     e.preventDefault();
-    if (todoText.value === '') {
+    if (todoText.value.trim() === '') {
         alert("不能輸入空白值");
         return
     }
@@ -40,6 +40,7 @@ addBtn.addEventListener("click", function(e) {
         completed: false
     };
     data.push(todoData);
+    todoText.value = '';
     renderData(currentTab);
 })
 
