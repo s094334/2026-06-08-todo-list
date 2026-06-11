@@ -1,13 +1,14 @@
 let data = [];
+const todoItems = document.querySelector(".todoList_item");
 
 // 渲染畫面
 function renderData() {
     let str = '';
     data.forEach(function(item) {
         str += `
-        <li>
+        <li data-id="${item.id}">
             <label class="todoList_label">
-                <input class="todoList_input" type="checkbox" value="true">
+                <input class="todoList_input" type="checkbox" value="true" ${item.completed ? 'checked' : ''}>
                 <span>${item.content}</span>
             </label>
             <a href="#">
@@ -17,7 +18,6 @@ function renderData() {
         `
     })
 
-    const todoItems = document.querySelector(".todoList_item");
     todoItems.innerHTML = str;
 }
 
@@ -40,3 +40,11 @@ addBtn.addEventListener("click", function(e) {
     renderData()
 })
 
+// 更新 todo 狀態
+todoItems.addEventListener("click", function(e) {
+    const list = e.target.closest('li');
+    const todoId = Number(list.dataset.id);
+
+    const findTodo = data.find(item => item.id === todoId);
+    findTodo.completed = e.target.checked;
+})
