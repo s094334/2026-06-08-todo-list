@@ -103,3 +103,12 @@ todoItems.addEventListener("click", function(e) {
     
     renderData(currentTab);
 })
+
+// 清除已完成項目
+const delAllBtn = document.querySelector(".todoList_statistics a");
+delAllBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+    data = data.filter(item => item.completed === false);
+
+    renderData(currentTab);
+})
