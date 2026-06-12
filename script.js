@@ -35,15 +35,19 @@ addBtn.addEventListener("click", function(e) {
         alert("不能輸入空白值");
         return
     }
+    addTodo();
+    todoText.value = '';
+    renderData(currentTab);
+})
+
+function addTodo() {
     let todoData = {
         id: Date.now(), 
         content: todoText.value,
         completed: false
     };
     data.push(todoData);
-    todoText.value = '';
-    renderData(currentTab);
-})
+}
 
 // 更新 todo 狀態
 todoItems.addEventListener("click", function(e) {
@@ -70,8 +74,8 @@ todoListTab.addEventListener("click", function(e) {
     const tab = e.target.closest('a');
     tab.classList.add("active");
 
-    const filter = tab.dataset.tab;
-    currentTab = filter;
+    const filterTab = tab.dataset.tab;
+    currentTab = filterTab;
     renderData(currentTab)
 })
 
@@ -100,15 +104,16 @@ function completedCount(data) {
 todoItems.addEventListener("click", function(e) {
     if (!e.target.closest('a')) return;
     e.preventDefault();
-
-    const list = e.target.closest('li');
-    const todoId = Number(list.dataset.id);
-    
-    const index = data.findIndex(({ id }) => id === todoId);
-    data.splice(index, 1);
-    
+    deleteTodo(e)
     renderData(currentTab);
 })
+
+function deleteTodo(e) {
+    const list = e.target.closest('li');
+    const todoId = Number(list.dataset.id);
+    const index = data.findIndex(({ id }) => id === todoId);
+    data.splice(index, 1);
+}
 
 // 清除已完成項目
 const delAllBtn = document.querySelector(".todoList_statistics a");
