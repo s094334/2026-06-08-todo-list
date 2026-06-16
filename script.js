@@ -57,18 +57,28 @@ addBtn.addEventListener("click", function(e) {
         alert("不能輸入空白值");
         return
     }
-    addTodo();
+    addTodo(todoText.value);
     todoText.value = '';
-    renderData(currentTab);
 })
 
-function addTodo() {
-    let todoData = {
-        id: Date.now(), 
-        content: todoText.value,
-        completed: false
-    };
-    data.push(todoData);
+async function addTodo(content) {
+    try {
+        const response = await fetch(jsonServerUrl,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: Date.now(),
+                    content: content,
+                    completed: false
+                })
+            }
+        );
+        await response.json();
+        await renderData();
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
 // 更新 todo 狀態
