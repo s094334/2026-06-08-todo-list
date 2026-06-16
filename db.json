@@ -4,6 +4,16 @@
       "id": "1",
       "content": "範例: todo",
       "completed": false
+    },
+    {
+      "id": "BGSy8TbjDSQ",
+      "content": "123",
+      "completed": false
+    },
+    {
+      "id": "i4_1sVejEY8",
+      "content": "TEST",
+      "completed": true
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

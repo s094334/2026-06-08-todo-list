@@ -88,15 +88,35 @@ async function addTodo(content) {
 }
 
 // 更新 todo 狀態
-todoItems.addEventListener("click", function(e) {
+todoItems.addEventListener("change", function(e) {
     const list = e.target.closest('li');
-    const todoId = Number(list.dataset.id);
+    const todoId = list.dataset.id;
 
-    const findTodo = data.find(({ id }) => id === todoId);
-    findTodo.completed = e.target.checked;
-
-    completedCount(data);
+    updateTodo(todoId, e.target.checked)
 })
+
+async function updateTodo(todoId, completed) {
+    try {
+        const response = await fetch(`${jsonServerUrl}/${todoId}`,
+            {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    completed: completed
+                })
+            }
+        );
+
+        if (!response.ok) {
+            return { success: false, error: `HTTP ${response.status}` };
+        }
+
+        await response.json();
+        await renderData();
+    } catch (error) {
+        console.error(error.message);
+    }
+}
 
 // 顯示全部、待完成還是已完成
 const todoListTab = document.querySelector('.todoList_tab');
