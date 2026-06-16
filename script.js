@@ -53,6 +53,8 @@ async function renderData() {
         });
 
         todoItems.innerHTML = template;
+
+        completedCount()
     } catch (error) {
         console.error(error.message);
     }
@@ -149,12 +151,22 @@ todoListTab.addEventListener("click", function(e) {
 })
 
 // 計算已完成的項目
-async function completedCount(data) {
-    const completedCount = data
-        .filter(({ completed }) => completed)
-        .length;
-    const el = document.querySelector(".todoList_statistics p");
-    el.textContent = `${completedCount} 個已完成項目`;
+async function completedCount() {
+    try {
+        const response = await fetch(`${jsonServerUrl}?completed=true`);
+
+        if (!response.ok) {
+            return { success: false, error: `HTTP ${response.status}` };
+        }
+
+        const data = await response.json();
+
+        const el = document.querySelector(".todoList_statistics p");
+        el.textContent = `${data.length} 個已完成項目`;
+
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
 // 刪除 todo
