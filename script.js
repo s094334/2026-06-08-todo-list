@@ -7,8 +7,9 @@ const jsonServerUrl = "http://localhost:3000/todos";
 async function getTodos() {
     try {
         const response = await fetch(jsonServerUrl);
+
         if (!response.ok) {
-        throw new Error(`回應狀態：${response.status}`);
+            return { success: false, error: `HTTP ${response.status}` };
         }
 
         const data = await response.json();
@@ -74,6 +75,11 @@ async function addTodo(content) {
                 })
             }
         );
+
+        if (!response.ok) {
+            return { success: false, error: `HTTP ${response.status}` };
+        }
+
         await response.json();
         await renderData();
     } catch (error) {
@@ -149,6 +155,11 @@ async function deleteTodo(todoId) {
                 method: 'DELETE',
             }
         );
+
+        if (!response.ok) {
+            return { success: false, error: `HTTP ${response.status}` };
+        }
+
         await renderData();
     } catch (error) {
         console.error(error.message);
