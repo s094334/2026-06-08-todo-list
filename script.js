@@ -149,7 +149,7 @@ todoListTab.addEventListener("click", function(e) {
 })
 
 // 計算已完成的項目
-function completedCount(data) {
+async function completedCount(data) {
     const completedCount = data
         .filter(({ completed }) => completed)
         .length;
@@ -184,12 +184,3 @@ async function deleteTodo(todoId) {
         console.error(error.message);
     }
 }
-
-// 清除已完成項目
-const delAllBtn = document.querySelector(".todoList_statistics a");
-delAllBtn.addEventListener("click", function(e) {
-    e.preventDefault();
-    data = data.filter(({ completed }) => completed === false);
-
-    renderData(currentTab);
-})
