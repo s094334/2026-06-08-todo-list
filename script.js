@@ -4,9 +4,21 @@ const todoItems = document.querySelector(".todoList_item");
 const jsonServerUrl = "http://localhost:3000/todos";
 
 // 宣告非同步函式去拉 todo 資料
-async function getTodos() {
+async function getTodos(currentTab) {
     try {
-        const response = await fetch(jsonServerUrl);
+        let url = '';
+        switch (currentTab) {
+            case 'pending':
+                url = `${jsonServerUrl}?completed=false`;
+                break;
+            case 'completed':
+                url = `${jsonServerUrl}?completed=true`;
+                break;
+            default:
+                url = jsonServerUrl;
+        }
+
+        const response = await fetch(url);
 
         if (!response.ok) {
             return { success: false, error: `HTTP ${response.status}` };
@@ -22,7 +34,7 @@ async function getTodos() {
 // 渲染畫面
 async function renderData() {
     try {
-        const todos = await getTodos();
+        const todos = await getTodos(currentTab);
 
         let template = '';
         todos.forEach(function(item) {
@@ -46,7 +58,7 @@ async function renderData() {
     }
 }
 
-renderData();
+renderData()
 
 // 新增 todo
 const addBtn = document.querySelector(".addBtn");
@@ -81,7 +93,7 @@ async function addTodo(content) {
         }
 
         await response.json();
-        await renderData();
+        await renderData(currentTab);
     } catch (error) {
         console.error(error.message);
     }
@@ -112,7 +124,7 @@ async function updateTodo(todoId, completed) {
         }
 
         await response.json();
-        await renderData();
+        await renderData(currentTab);
     } catch (error) {
         console.error(error.message);
     }
@@ -132,22 +144,9 @@ todoListTab.addEventListener("click", function(e) {
     const tab = e.target.closest('a');
     tab.classList.add("active");
 
-    const filterTab = tab.dataset.tab;
-    currentTab = filterTab;
-    renderData(currentTab)
+    currentTab = tab.dataset.tab;
+    renderData(currentTab);
 })
-
-// 篩選不同的 todo
-function filterTab(filter) {
-    switch (filter) {
-        case 'pending':
-            return data.filter(({ completed }) => !completed);
-        case 'completed':
-            return data.filter(({ completed }) => completed);
-        default: 
-            return data;
-    }
-}
 
 // 計算已完成的項目
 function completedCount(data) {
@@ -180,7 +179,7 @@ async function deleteTodo(todoId) {
             return { success: false, error: `HTTP ${response.status}` };
         }
 
-        await renderData();
+        await renderData(currentTab);
     } catch (error) {
         console.error(error.message);
     }
