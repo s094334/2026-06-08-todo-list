@@ -1,13 +1,22 @@
 let data = [];
 let currentTab = 'all';
 const todoItems = document.querySelector(".todoList_item");
+const jsonServerUrl = "http://localhost:3000/todos";
+
+// 宣告非同步函式去拉 todo 資料
+async function getTodos() {
+    const response = await fetch(jsonServerUrl);
+    const data = await response.json();
+    return data;
+}
 
 // 渲染畫面
-function renderData(currentTab) {
-    const filteredData = filterTab(currentTab);
+async function renderData() {
+    const todos = await getTodos();
+
     let template = '';
-    filteredData.forEach(function(item) {
-        const { id, completed, content } = item
+    todos.forEach(function(item) {
+        const { id, completed, content } = item;
         template += `
         <li data-id="${id}">
             <label class="todoList_label">
@@ -19,11 +28,13 @@ function renderData(currentTab) {
             </a>
         </li>
         `
-    })
+    });
 
     todoItems.innerHTML = template;
-    completedCount(data);
+    console.log(`一共有 ${template} 筆記`);
 }
+
+renderData();
 
 // 新增 todo
 const addBtn = document.querySelector(".addBtn");
