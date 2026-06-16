@@ -136,15 +136,23 @@ function completedCount(data) {
 todoItems.addEventListener("click", function(e) {
     if (!e.target.closest('a')) return;
     e.preventDefault();
-    deleteTodo(e)
-    renderData(currentTab);
+
+    const list = e.target.closest('li');
+    const todoId = list.dataset.id;
+    deleteTodo(todoId)
 })
 
-function deleteTodo(e) {
-    const list = e.target.closest('li');
-    const todoId = Number(list.dataset.id);
-    const index = data.findIndex(({ id }) => id === todoId);
-    data.splice(index, 1);
+async function deleteTodo(todoId) {
+    try {
+        const response = await fetch(`${jsonServerUrl}/${todoId}`,
+            {
+                method: 'DELETE',
+            }
+        );
+        await renderData();
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
 // 清除已完成項目
