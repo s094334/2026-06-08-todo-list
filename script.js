@@ -4,7 +4,7 @@ const todoItems = document.querySelector(".todoList_item");
 const jsonServerUrl = "http://localhost:3000/todos";
 
 // 宣告非同步函式去拉 todo 資料
-async function getTodos(currentTab) {
+function getTodos(currentTab) {
     let url = '';
     switch (currentTab) {
         case 'pending':
@@ -29,7 +29,7 @@ async function getTodos(currentTab) {
 };
 
 // 渲染畫面
-async function renderData() {
+function renderData() {
     return getTodos(currentTab)
         .then(function(todos) {
             let template = '';
