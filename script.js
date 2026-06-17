@@ -5,59 +5,54 @@ const jsonServerUrl = "http://localhost:3000/todos";
 
 // 宣告非同步函式去拉 todo 資料
 async function getTodos(currentTab) {
-    try {
-        let url = '';
-        switch (currentTab) {
-            case 'pending':
-                url = `${jsonServerUrl}?completed=false`;
-                break;
-            case 'completed':
-                url = `${jsonServerUrl}?completed=true`;
-                break;
-            default:
-                url = jsonServerUrl;
-        }
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            return { success: false, error: `HTTP ${response.status}` };
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error(error.message);
+    let url = '';
+    switch (currentTab) {
+        case 'pending':
+            url = `${jsonServerUrl}?completed=false`;
+            break;
+        case 'completed':
+            url = `${jsonServerUrl}?completed=true`;
+            break;
+        default:
+            url = jsonServerUrl;
     }
+    return fetch(url)
+        .then(function(response) {
+            if (!response.ok) {
+                return { success: false, error: `HTTP ${response.status}` };
+            }
+            return response.json();
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
 };
 
 // 渲染畫面
 async function renderData() {
-    try {
-        const todos = await getTodos(currentTab);
-
-        let template = '';
-        todos.forEach(function(item) {
-            const { id, completed, content } = item;
-            template += `
-            <li data-id="${id}">
-                <label class="todoList_label">
-                    <input class="todoList_input" type="checkbox" value="true" ${completed ? 'checked' : ''}>
-                    <span>${content}</span>
-                </label>
-                <a href="#">
-                    <i class="fa fa-times"></i>
-                </a>
-            </li>
-            `
+    return getTodos(currentTab)
+        .then(function(todos) {
+            let template = '';
+            todos.forEach(function(item) {
+                const { id, completed, content } = item;
+                template += `
+                <li data-id="${id}">
+                    <label class="todoList_label">
+                        <input class="todoList_input" type="checkbox" value="true" ${completed ? 'checked' : ''}>
+                        <span>${content}</span>
+                    </label>
+                    <a href="#">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </li>
+                `
+            });
+            todoItems.innerHTML = template;
+            completedCount();
+        })
+        .catch(function(error) {
+            console.error(error.message);
         });
-
-        todoItems.innerHTML = template;
-
-        completedCount()
-    } catch (error) {
-        console.error(error.message);
-    }
 }
 
 renderData()
