@@ -4,16 +4,6 @@
       "id": "1",
       "content": "範例: todo",
       "completed": true
-    },
-    {
-      "id": "qLXc4UWSa2g",
-      "content": "123",
-      "completed": true
-    },
-    {
-      "id": "XauJZp81S1Q",
-      "content": "444",
-      "completed": false
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -168,23 +168,23 @@ todoItems.addEventListener("click", function(e) {
 
     const list = e.target.closest('li');
     const todoId = list.dataset.id;
-    deleteTodo(todoId)
+    deleteTodo(todoId);
+    renderData(currentTab);
 })
 
-async function deleteTodo(todoId) {
-    try {
-        const response = await fetch(`${jsonServerUrl}/${todoId}`,
+function deleteTodo(todoId) {
+    return fetch(`${jsonServerUrl}/${todoId}`,
             {
                 method: 'DELETE',
             }
-        );
-
-        if (!response.ok) {
-            return { success: false, error: `HTTP ${response.status}` };
-        }
-
-        await renderData(currentTab);
-    } catch (error) {
-        console.error(error.message);
-    }
+        )
+        .then(function(response) {
+            if (!response.ok) {
+                return { success: false, error: `HTTP ${response.status}` };
+            }
+            return response.json();
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
 }
