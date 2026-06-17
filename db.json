@@ -6,24 +6,19 @@
       "completed": false
     },
     {
-      "id": "x0_e_A9RR10",
-      "content": "test1",
-      "completed": true
-    },
-    {
       "id": "EVLw-qKrVBg",
       "content": "test2",
       "completed": false
     },
     {
-      "id": "ULCBa6ba7kw",
-      "content": "123",
-      "completed": true
+      "content": "test3",
+      "completed": true,
+      "id": "8Uc3xzPDoe0"
     },
     {
-      "content": "test3",
+      "content": "test1",
       "completed": false,
-      "id": "8Uc3xzPDoe0"
+      "id": "VOCDXf_lf2I"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

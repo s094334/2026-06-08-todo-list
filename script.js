@@ -69,10 +69,11 @@ addBtn.addEventListener("click", function(e) {
         alert("不能輸入空白值");
         return
     }
-    addTodo(todoText.value);
-    todoText.value = '';
-
-    renderData(currentTab);
+    addTodo(todoText.value)
+        .then(function() {
+            todoText.value = '';
+            return renderData(currentTab);
+        });
 })
 
 function addTodo(content) {
@@ -102,7 +103,6 @@ todoItems.addEventListener("change", function(e) {
     const todoId = list.dataset.id;
 
     updateTodo(todoId, e.target.checked);
-    renderData(currentTab);
 })
 
 function updateTodo(todoId, completed) {
@@ -166,11 +166,14 @@ function completedCount() {
 todoItems.addEventListener("click", function(e) {
     if (!e.target.closest('a')) return;
     e.preventDefault();
-
+    
     const list = e.target.closest('li');
     const todoId = list.dataset.id;
-    deleteTodo(todoId);
-    renderData(currentTab);
+
+    deleteTodo(todoId)
+        .then(function() {
+            return renderData(currentTab);
+        });
 })
 
 function deleteTodo(todoId) {
