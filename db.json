@@ -4,31 +4,6 @@
       "id": "1",
       "content": "範例: todo",
       "completed": true
-    },
-    {
-      "id": "BGSy8TbjDSQ",
-      "content": "123",
-      "completed": false
-    },
-    {
-      "id": "i4_1sVejEY8",
-      "content": "TEST",
-      "completed": true
-    },
-    {
-      "id": "QGer61zTWI0",
-      "content": "456",
-      "completed": false
-    },
-    {
-      "id": "BB1PKNuFHNk",
-      "content": "678",
-      "completed": false
-    },
-    {
-      "id": "iA0ldvuXhu0",
-      "content": "999",
-      "completed": false
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

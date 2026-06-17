@@ -69,31 +69,30 @@ addBtn.addEventListener("click", function(e) {
     }
     addTodo(todoText.value);
     todoText.value = '';
+
+    renderData(currentTab);
 })
 
-async function addTodo(content) {
-    try {
-        const response = await fetch(jsonServerUrl,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: Date.now(),
-                    content: content,
-                    completed: false
-                })
+function addTodo(content) {
+    return fetch(jsonServerUrl,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: Date.now(),
+                content: content,
+                completed: false
+            })
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                return { success: false, error: `HTTP ${response.status}` };
             }
-        );
-
-        if (!response.ok) {
-            return { success: false, error: `HTTP ${response.status}` };
-        }
-
-        await response.json();
-        await renderData(currentTab);
-    } catch (error) {
-        console.error(error.message);
-    }
+            return response.json();
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
 }
 
 // 更新 todo 狀態
