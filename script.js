@@ -29,7 +29,8 @@ function getTodos(currentTab) {
 };
 
 // 渲染畫面
-function renderData() {
+function renderData(currentTab) {
+    todoItems.innerHTML = '<p>載入中...</p>'
     return getTodos(currentTab)
         .then(function(todos) {
             let template = '';
@@ -51,11 +52,12 @@ function renderData() {
             completedCount();
         })
         .catch(function(error) {
+            todoItems.innerHTML = '<p>載入失敗，請再試試唷！</p>'
             console.error(error.message);
         });
 }
 
-renderData()
+renderData(currentTab)
 
 // 新增 todo
 const addBtn = document.querySelector(".addBtn");
@@ -79,7 +81,6 @@ function addTodo(content) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                id: Date.now(),
                 content: content,
                 completed: false
             })
