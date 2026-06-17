@@ -100,12 +100,12 @@ todoItems.addEventListener("change", function(e) {
     const list = e.target.closest('li');
     const todoId = list.dataset.id;
 
-    updateTodo(todoId, e.target.checked)
+    updateTodo(todoId, e.target.checked);
+    renderData(currentTab);
 })
 
-async function updateTodo(todoId, completed) {
-    try {
-        const response = await fetch(`${jsonServerUrl}/${todoId}`,
+function updateTodo(todoId, completed) {
+    return fetch(`${jsonServerUrl}/${todoId}`,
             {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
@@ -113,17 +113,16 @@ async function updateTodo(todoId, completed) {
                     completed: completed
                 })
             }
-        );
-
-        if (!response.ok) {
-            return { success: false, error: `HTTP ${response.status}` };
-        }
-
-        await response.json();
-        await renderData(currentTab);
-    } catch (error) {
-        console.error(error.message);
-    }
+        )
+        .then(function(response) {
+            if (!response.ok) {
+                return { success: false, error: `HTTP ${response.status}` };
+            }
+            return response.json();
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
 }
 
 // 顯示全部、待完成還是已完成
