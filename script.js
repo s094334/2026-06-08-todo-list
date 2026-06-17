@@ -1,4 +1,3 @@
-let data = [];
 let currentTab = 'all';
 const todoItems = document.querySelector(".todoList_item");
 const jsonServerUrl = "http://localhost:3000/todos";
@@ -19,7 +18,7 @@ function getTodos(currentTab) {
     return fetch(url)
         .then(function(response) {
             if (!response.ok) {
-                return { success: false, error: `HTTP ${response.status}` };
+                throw new Error(`HTTP ${response.status}`);
             }
             return response.json();
         })
@@ -70,10 +69,7 @@ addBtn.addEventListener("click", function(e) {
         return
     }
     addTodo(todoText.value)
-        .then(function() {
-            todoText.value = '';
-            return renderData(currentTab);
-        });
+    todoText.value = '';
 })
 
 function addTodo(content) {
@@ -88,9 +84,12 @@ function addTodo(content) {
         })
         .then(function(response) {
             if (!response.ok) {
-                return { success: false, error: `HTTP ${response.status}` };
+                throw new Error(`HTTP ${response.status}`);
             }
             return response.json();
+        })
+        .then(function() {
+            return renderData(currentTab);
         })
         .catch(function(error) {
             console.error(error.message);
@@ -103,6 +102,7 @@ todoItems.addEventListener("change", function(e) {
     const todoId = list.dataset.id;
 
     updateTodo(todoId, e.target.checked);
+    completedCount();
 })
 
 function updateTodo(todoId, completed) {
@@ -117,7 +117,7 @@ function updateTodo(todoId, completed) {
         )
         .then(function(response) {
             if (!response.ok) {
-                return { success: false, error: `HTTP ${response.status}` };
+                throw new Error(`HTTP ${response.status}`);
             }
             return response.json();
         })
@@ -149,7 +149,7 @@ function completedCount() {
     return fetch(`${jsonServerUrl}?completed=true`)
         .then(function(response) {
             if (!response.ok) {
-                return { success: false, error: `HTTP ${response.status}` };
+                throw new Error(`HTTP ${response.status}`);
             }
             return response.json();
         })
@@ -171,9 +171,6 @@ todoItems.addEventListener("click", function(e) {
     const todoId = list.dataset.id;
 
     deleteTodo(todoId)
-        .then(function() {
-            return renderData(currentTab);
-        });
 })
 
 function deleteTodo(todoId) {
@@ -184,9 +181,11 @@ function deleteTodo(todoId) {
         )
         .then(function(response) {
             if (!response.ok) {
-                return { success: false, error: `HTTP ${response.status}` };
+                throw new Error(`HTTP ${response.status}`);
             }
-            return response.json();
+        })
+        .then(function() {
+            return renderData(currentTab);
         })
         .catch(function(error) {
             console.error(error.message);
