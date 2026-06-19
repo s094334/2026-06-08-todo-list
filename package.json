@@ -1,0 +1,23 @@
+{
+  "name": "2026-06-08-todo-list",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/s094334/2026-06-08-todo-list#readme",
+  "bugs": {
+    "url": "https://github.com/s094334/2026-06-08-todo-list/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s094334/2026-06-08-todo-list.git"
+  },
+  "license": "ISC",
+  "author": "chelsea",
+  "type": "commonjs",
+  "main": "script.js",
+  "scripts": {
+    "server": "npx json-server db.json"
+  },
+  "dependencies": {
+    "json-server": "^1.0.0-beta.15"
+  }
+}

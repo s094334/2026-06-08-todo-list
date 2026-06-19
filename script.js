@@ -1,28 +1,62 @@
-let data = [];
 let currentTab = 'all';
 const todoItems = document.querySelector(".todoList_item");
+const jsonServerUrl = "http://localhost:3000/todos";
+
+// 宣告非同步函式去拉 todo 資料
+function getTodos(currentTab) {
+    let url = '';
+    switch (currentTab) {
+        case 'pending':
+            url = `${jsonServerUrl}?completed=false`;
+            break;
+        case 'completed':
+            url = `${jsonServerUrl}?completed=true`;
+            break;
+        default:
+            url = jsonServerUrl;
+    }
+    return fetch(url)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
+};
 
 // 渲染畫面
 function renderData(currentTab) {
-    const filterData = filterTab(currentTab);
-    let str = '';
-    filterData.forEach(function(item) {
-        str += `
-        <li data-id="${item.id}">
-            <label class="todoList_label">
-                <input class="todoList_input" type="checkbox" value="true" ${item.completed ? 'checked' : ''}>
-                <span>${item.content}</span>
-            </label>
-            <a href="#">
-                <i class="fa fa-times"></i>
-            </a>
-        </li>
-        `
-    })
-
-    todoItems.innerHTML = str;
-    completedCount(data);
+    todoItems.innerHTML = '<p>載入中...</p>'
+    return getTodos(currentTab)
+        .then(function(todos) {
+            let template = '';
+            todos.forEach(function(item) {
+                const { id, completed, content } = item;
+                template += `
+                <li data-id="${id}">
+                    <label class="todoList_label">
+                        <input class="todoList_input" type="checkbox" value="true" ${completed ? 'checked' : ''}>
+                        <span>${content}</span>
+                    </label>
+                    <a href="#">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </li>
+                `
+            });
+            todoItems.innerHTML = template;
+            completedCount();
+        })
+        .catch(function(error) {
+            todoItems.innerHTML = '<p>載入失敗，請再試試唷！</p>'
+            console.error(error.message);
+        });
 }
+
+renderData(currentTab)
 
 // 新增 todo
 const addBtn = document.querySelector(".addBtn");
@@ -34,26 +68,63 @@ addBtn.addEventListener("click", function(e) {
         alert("不能輸入空白值");
         return
     }
-    let todoData = {
-        id: Date.now(), 
-        content: todoText.value,
-        completed: false
-    };
-    data.push(todoData);
+    addTodo(todoText.value)
     todoText.value = '';
-    renderData(currentTab);
 })
+
+function addTodo(content) {
+    return fetch(jsonServerUrl,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content: content,
+                completed: false
+            })
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(function() {
+            return renderData(currentTab);
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
+}
 
 // 更新 todo 狀態
-todoItems.addEventListener("click", function(e) {
+todoItems.addEventListener("change", function(e) {
     const list = e.target.closest('li');
-    const todoId = Number(list.dataset.id);
+    const todoId = list.dataset.id;
 
-    const findTodo = data.find(item => item.id === todoId);
-    findTodo.completed = e.target.checked;
-
-    completedCount(data);
+    updateTodo(todoId, e.target.checked);
+    completedCount();
 })
+
+function updateTodo(todoId, completed) {
+    return fetch(`${jsonServerUrl}/${todoId}`,
+            {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    completed: completed
+                })
+            }
+        )
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
+}
 
 // 顯示全部、待完成還是已完成
 const todoListTab = document.querySelector('.todoList_tab');
@@ -69,47 +140,54 @@ todoListTab.addEventListener("click", function(e) {
     const tab = e.target.closest('a');
     tab.classList.add("active");
 
-    const filter = tab.dataset.tab;
-    currentTab = filter;
-    renderData(currentTab)
+    currentTab = tab.dataset.tab;
+    renderData(currentTab);
 })
 
-// 篩選不同的 todo
-function filterTab(filter) {
-    if (filter === 'pending') {
-        return data.filter(item => item.completed === false)
-    } else if (filter === 'completed') {
-        return data.filter(item => item.completed === true)
-    }
-    return data
-}
-
 // 計算已完成的項目
-function completedCount(data) {
-    const completedCount = data.filter(item => item.completed).length;
-    const el = document.querySelector(".todoList_statistics p");
-    el.textContent = `${completedCount} 個已完成項目`;
+function completedCount() {
+    return fetch(`${jsonServerUrl}?completed=true`)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            const el = document.querySelector(".todoList_statistics p");
+            el.textContent = `${data.length} 個已完成項目`;
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
 }
 
 // 刪除 todo
 todoItems.addEventListener("click", function(e) {
     if (!e.target.closest('a')) return;
     e.preventDefault();
-
+    
     const list = e.target.closest('li');
-    const todoId = Number(list.dataset.id);
-    
-    const index = data.findIndex(item => item.id === todoId);
-    data.splice(index, 1);
-    
-    renderData(currentTab);
+    const todoId = list.dataset.id;
+
+    deleteTodo(todoId)
 })
 
-// 清除已完成項目
-const delAllBtn = document.querySelector(".todoList_statistics a");
-delAllBtn.addEventListener("click", function(e) {
-    e.preventDefault();
-    data = data.filter(item => item.completed === false);
-
-    renderData(currentTab);
-})
+function deleteTodo(todoId) {
+    return fetch(`${jsonServerUrl}/${todoId}`,
+            {
+                method: 'DELETE',
+            }
+        )
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+        })
+        .then(function() {
+            return renderData(currentTab);
+        })
+        .catch(function(error) {
+            console.error(error.message);
+        });
+}
