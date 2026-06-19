@@ -1,5 +1,25 @@
 {
-    "todos": [
-        { "id": "1", "content": "範例: todo", "completed": false }
-    ]
+  "todos": [
+    {
+      "id": "1",
+      "content": "範例: todo",
+      "completed": false
+    },
+    {
+      "content": "test3",
+      "completed": false,
+      "id": "8Uc3xzPDoe0"
+    },
+    {
+      "content": "test1",
+      "completed": true,
+      "id": "VOCDXf_lf2I"
+    },
+    {
+      "content": "test5",
+      "completed": false,
+      "id": "Gi566Yy6XLE"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
